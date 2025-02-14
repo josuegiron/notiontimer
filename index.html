@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stop Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+        }
+        .timer {
+            background: #222;
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        h1 {
+            font-size: 60px;
+            margin: 10px 0;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 400;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        /* Establecer tamaño de botón Start y Reset */
+        #startButton {
+            font-size: 16px;
+            width: auto;
+            min-width: 100px; /* Cambié el min-width a 200px para que no sea tan grande */
+            padding: 10px 20px;
+        }
+        #moreLessButtons button {
+            font-size: 14px;
+            width: 50px;
+        }
+        .preset-buttons {
+            margin-top: 15px;
+        }
+        .preset-buttons div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .preset-buttons button {
+            flex: 1;
+            margin: 0 5px;
+            font-size: 10px;
+        }
+        .separator {
+            margin-top: 20px;
+            border-top: 1px solid #555;
+        }
+        .break-buttons div {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .break-buttons button {
+            flex: 1;
+            margin: 0 5px;
+            font-size: 10px;
+        }
+        .bar {
+            width: 100%;
+            height: 5px;
+            background: #555;
+            margin: 10px 0;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: white;
+            width: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease-in-out;
+        }
+        #startButton:disabled {
+            background: #888;
+            cursor: not-allowed;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        button:active, button:focus {
+            background-color: #666;
+        }
+        button:focus {
+            outline: none;
+        }
+        #settingsIcon {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        #settingsMenu {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        #settingsMenu button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 10px;
+            width: 100%;
+            border-radius: 15px;
+        }
+        #settingsMenu #saveSettings {
+            font-size: 11px;
+        }
+        #settingsMenu button:active {
+            transform: scale(0.95);
+        }
+        #settingsMenu button.active {
+            /* background-color: #4CAF50;
+            color: white; */
+            background-color: #888;
+        }
+        #settingsMenu button:focus {
+            outline: none;
+        }
+        #settingsMenu button:active, button:focus {
+            background-color: #666;
+        }
+        .audio-player {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer">
+        <h1 id="display">00:00</h1>
+        <div class="bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="controls" id="moreLessButtons">
+            <button onclick="changeTime(-1)">-</button>
+            <button id="startButton" onclick="toggleTimer()">Start</button>
+            <button onclick="changeTime(1)">+</button>
+        </div>
+        <div class="preset-buttons">
+            <div>
+                <button onclick="setPresetTime(25)">Light Session</button>
+                <button onclick="setPresetTime(50)">Normal Session</button>
+                <button onclick="setPresetTime(90)">Deep Session</button>
+            </div>
+            <div>
+                <button onclick="setPresetTime(120)">Ultra Session</button>
+                <button onclick="setPresetTime(180)">Master Session</button>
+            </div>
+        </div>
+        
+        <!-- Linea de separación -->
+        <div class="separator"></div>
+        
+        <!-- Botones de descanso -->
+        <div class="break-buttons">
+            <div>
+                <button onclick="setPresetTime(5)">Short Break</button>
+                <button onclick="setPresetTime(10)">Normal Break</button>
+                <button onclick="setPresetTime(15)">Long Break</button>
+            </div>
+        </div>
+
+        <audio id="alarm1" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto"></audio>
+        <audio id="alarm2" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" preload="auto"></audio>
+        <audio id="alarm3" class="audio-player" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" preload="auto"></audio>
+        <audio id="alarm4" class="audio-player" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" preload="auto"></audio>
+        <audio id="alarm5" class="audio-player" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" preload="auto"></audio>
+        <div id="settingsIcon">&#9881;</div>
+        <div id="settingsMenu">
+            <button id="balarm1" onclick="setSound('alarm1')">Sound 1</button>
+            <button id="balarm2" onclick="setSound('alarm2')">Sound 2</button>
+            <button id="balarm3" onclick="setSound('alarm3')">Sound 3</button>
+            <button id="balarm4" onclick="setSound('alarm4')">Sound 4</button>
+            <button id="balarm5" onclick="setSound('alarm5')">Sound 5</button>
+            <button id="saveSettings" onclick="saveSettings()">Save &#128196;</button>
+        </div>
+    </div>
+
+    
+
+    <script>
+        let countdown, time = 0;
+        let currentSound = "alarm1";
+        const startButton = document.getElementById("startButton");
+        startButton.disabled = true;
+        const alarmButton = document.getElementById("balarm1");
+        alarmButton.classList.add('active');
+
+        function toggleTimer() {
+            const startButton = document.getElementById("startButton");
+            const alarm = document.getElementById(currentSound); // Usar el sonido actual
+            if (startButton.innerText === "Start") {
+                // Iniciar el temporizador
+                startButton.innerText = "Reset";
+                startButton.disabled = false;
+                let totalTime = time;
+                countdown = setInterval(() => {
+                    if (time <= 0) {
+                        clearInterval(countdown);
+                        countdown = null;
+                        alarm.play(); // Reproducir el sonido
+                        startButton.innerText = "Stop";
+                        startButton.disabled = false;
+                    } else {
+                        time--;
+                        displayTime(time);
+                        updateProgress(totalTime);
+                    }
+                }, 1000);
+            } else if (startButton.innerText === "Reset") {
+                // Resetear el temporizador
+                clearInterval(countdown);
+                countdown = null;
+                time = 0;
+                displayTime(time);
+                document.getElementById('progress').style.width = "100%";
+                startButton.innerText = "Start";
+                startButton.disabled = true;
+                
+                // Detener el sonido cuando se presiona Reset
+                alarm.pause();
+                alarm.currentTime = 0;
+            } else if (startButton.innerText === "Stop") {
+                // Apagar el sonido
+                alarm.pause();
+                alarm.currentTime = 0;
+                startButton.innerText = "Start";
+                startButton.disabled = true;
+            }
+        }
+
+        function changeTime(amount) {
+            time = Math.max(0, time + amount * 60);
+            displayTime(time);
+            document.getElementById('progress').style.width = "100%";
+            document.getElementById("startButton").disabled = time === 0;
+        }
+
+        function setPresetTime(minutes) {
+            time = minutes * 60;
+            displayTime(time);
+            document.getElementById('progress').style.width = "100%";
+            document.getElementById("startButton").disabled = false;
+        }
+
+        function displayTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            document.getElementById('display').innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
+
+        function updateProgress(totalTime) {
+            if (totalTime > 0) {
+                const progress = (time / totalTime) * 100;
+                document.getElementById('progress').style.width = `${progress}%`;
+            }
+        }
+
+        function setSound(soundId) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Buscar el botón que fue clickeado y agregarle la clase "active"
+            const selectedButton = document.getElementById("b"+soundId)
+            console.log(selectedButton)
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+            if (currentSound) {
+                document.getElementById(currentSound).pause();
+                document.getElementById(currentSound).currentTime = 0;
+            }
+            currentSound = soundId;
+            document.getElementById(currentSound).play();
+
+        }
+
+        function openSettings() {
+            document.getElementById("settingsMenu").style.display = "block";
+        }
+
+        function saveSettings() {
+            document.getElementById("settingsMenu").style.display = "none";
+            const alarm = document.getElementById(currentSound);
+            alarm.pause();
+            alarm.currentTime = 0;
+        }
+
+        document.getElementById("settingsIcon").onclick = openSettings;
+    </script>
+</body>
+</html>
