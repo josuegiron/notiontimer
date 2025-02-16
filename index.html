@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             background-color: transparent;
             font-family: 'Inter', sans-serif;
         }
+
         * {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -23,7 +25,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        
+
         .timer {
             background: #222;
             color: white;
@@ -46,12 +48,14 @@
             font-weight: 600;
             line-height: 1.2;
         }
+
         .controls {
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 10px 0;
         }
+
         button {
             background: #444;
             color: white;
@@ -64,44 +68,54 @@
             font-weight: 400;
             transition: background 0.2s ease, transform 0.2s ease;
         }
+
         /* Establecer tamaño de botón Start y Reset */
         #startButton {
             font-size: 16px;
             width: auto;
-            min-width: 100px; /* Cambié el min-width a 200px para que no sea tan grande */
+            min-width: 100px;
+            /* Cambié el min-width a 200px para que no sea tan grande */
             padding: 10px 20px;
         }
+
         #moreLessButtons button {
             font-size: 14px;
             width: 50px;
         }
+
         .preset-buttons {
             margin-top: 15px;
         }
+
         .preset-buttons div {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
         }
+
         .preset-buttons button {
             flex: 1;
             margin: 0 5px;
             font-size: 10px;
         }
+
         .separator {
             margin-top: 20px;
             border-top: 1px solid #555;
         }
+
         .break-buttons div {
             display: flex;
             justify-content: space-between;
             margin-top: 15px;
         }
+
         .break-buttons button {
             flex: 1;
             margin: 0 5px;
             font-size: 10px;
         }
+
         .bar {
             width: 100%;
             height: 5px;
@@ -111,6 +125,7 @@
             border-radius: 10px;
             overflow: hidden;
         }
+
         .progress {
             height: 100%;
             background: white;
@@ -139,7 +154,7 @@
             background: #fff;
             color: #333;
         }
-        
+
         body.light-mode .progress {
             background: #555;
         }
@@ -165,15 +180,20 @@
             background: #888;
             cursor: not-allowed;
         }
+
         button:active {
             transform: scale(0.95);
         }
-        button:active, button:focus {
+
+        button:active,
+        button:focus {
             background-color: #666;
         }
+
         button:focus {
             outline: none;
         }
+
         #settingsIcon {
             position: absolute;
             top: 15px;
@@ -181,6 +201,7 @@
             font-size: 24px;
             cursor: pointer;
         }
+
         #settingsMenu {
             display: none;
             position: absolute;
@@ -192,6 +213,7 @@
             width: 150px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
+
         #settingsMenu button {
             background: #444;
             color: white;
@@ -202,31 +224,41 @@
             width: 100%;
             border-radius: 15px;
         }
+
         #settingsMenu #saveSettings {
             font-size: 11px;
         }
+
         #settingsMenu button:active {
             transform: scale(0.95);
         }
+
         #settingsMenu button.active {
             /* background-color: #4CAF50;
             color: white; */
             background-color: #888;
         }
+
         #settingsMenu button:focus {
             outline: none;
         }
-        #settingsMenu button:active, button:focus {
+
+        #settingsMenu button:active,
+        button:focus {
             background-color: #666;
         }
+
         .audio-player {
             display: none;
         }
     </style>
 </head>
+
 <body>
     <div class="timer">
-        <h1 id="display">00:00</h1>
+        <div onclick=togglePause()>
+            <h1 id="display">00:00</h1>
+        </div>
         <div class="bar">
             <div class="progress" id="progress"></div>
         </div>
@@ -246,10 +278,10 @@
                 <button onclick="setPresetTime(180)">Master Session</button>
             </div>
         </div>
-        
+
         <!-- Linea de separación -->
         <div class="separator"></div>
-        
+
         <!-- Botones de descanso -->
         <div class="break-buttons">
             <div>
@@ -259,12 +291,17 @@
             </div>
         </div>
 
-        <audio id="alarm1" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto"></audio>
-        <audio id="alarm2" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" preload="auto"></audio>
-        <audio id="alarm3" class="audio-player" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" preload="auto"></audio>
-        <audio id="alarm4" class="audio-player" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" preload="auto"></audio>
-        <audio id="alarm5" class="audio-player" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" preload="auto"></audio>
-        <div id="modeToggle">☾</div> 
+        <audio id="alarm1" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            preload="auto"></audio>
+        <audio id="alarm2" class="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+            preload="auto"></audio>
+        <audio id="alarm3" class="audio-player" class="audio-player"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" preload="auto"></audio>
+        <audio id="alarm4" class="audio-player" class="audio-player"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" preload="auto"></audio>
+        <audio id="alarm5" class="audio-player" class="audio-player"
+            src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" preload="auto"></audio>
+        <div id="modeToggle">☾</div>
         <div id="settingsIcon">&#9881;</div>
         <div id="settingsMenu">
             <button id="balarm1" onclick="setSound('alarm1')">Sound 1</button>
@@ -276,15 +313,18 @@
         </div>
     </div>
 
-    
+
 
     <script>
-        let countdown, time = 0;
+        let countdown, time = 0, totalTime = 0;
         let currentSound = "alarm1";
-        const startButton = document.getElementById("startButton");
-        startButton.disabled = true;
+        let isPaused = false
+
         const alarmButton = document.getElementById("balarm1");
+        const startButton = document.getElementById("startButton");
+
         alarmButton.classList.add('active');
+        startButton.disabled = true;
 
         // Función para alternar entre modo claro y oscuro
         function toggleMode() {
@@ -302,7 +342,7 @@
         }
 
         // Verificar el modo guardado al cargar la página
-        window.onload = function() {
+        window.onload = function () {
             const savedMode = localStorage.getItem("mode");
             if (savedMode === "light") {
                 document.body.classList.add("light-mode");
@@ -315,6 +355,20 @@
 
         document.getElementById("modeToggle").onclick = toggleMode;
 
+        function startTimer() {
+            if (time <= 0) {
+                clearInterval(countdown);
+                countdown = null;
+                alarm.play(); // Reproducir el sonido
+                startButton.innerText = "Stop";
+                startButton.disabled = false;
+            } else {
+                time--;
+                displayTime(time);
+                updateProgress(totalTime);
+            }
+        }
+
         function toggleTimer() {
             const startButton = document.getElementById("startButton");
             const alarm = document.getElementById(currentSound); // Usar el sonido actual
@@ -322,20 +376,8 @@
                 // Iniciar el temporizador
                 startButton.innerText = "Reset";
                 startButton.disabled = false;
-                let totalTime = time;
-                countdown = setInterval(() => {
-                    if (time <= 0) {
-                        clearInterval(countdown);
-                        countdown = null;
-                        alarm.play(); // Reproducir el sonido
-                        startButton.innerText = "Stop";
-                        startButton.disabled = false;
-                    } else {
-                        time--;
-                        displayTime(time);
-                        updateProgress(totalTime);
-                    }
-                }, 1000);
+                totalTime = time;
+                countdown = setInterval(startTimer, 1000);
             } else if (startButton.innerText === "Reset") {
                 // Resetear el temporizador
                 clearInterval(countdown);
@@ -345,7 +387,7 @@
                 document.getElementById('progress').style.width = "100%";
                 startButton.innerText = "Start";
                 startButton.disabled = true;
-                
+
                 // Detener el sonido cuando se presiona Reset
                 alarm.pause();
                 alarm.currentTime = 0;
@@ -360,13 +402,16 @@
 
         function changeTime(amount) {
             time = Math.max(0, time + amount * 60);
+            totalTime=time;
             displayTime(time);
             document.getElementById('progress').style.width = "100%";
             document.getElementById("startButton").disabled = time === 0;
         }
 
         function setPresetTime(minutes) {
+            console.log("add time")
             time = minutes * 60;
+            totalTime = time
             displayTime(time);
             document.getElementById('progress').style.width = "100%";
             document.getElementById("startButton").disabled = false;
@@ -392,7 +437,7 @@
             });
 
             // Buscar el botón que fue clickeado y agregarle la clase "active"
-            const selectedButton = document.getElementById("b"+soundId)
+            const selectedButton = document.getElementById("b" + soundId)
             console.log(selectedButton)
             if (selectedButton) {
                 selectedButton.classList.add('active');
@@ -418,6 +463,20 @@
         }
 
         document.getElementById("settingsIcon").onclick = openSettings;
+
+        function togglePause() {
+            if (countdown) {
+                clearInterval(countdown);
+                countdown = null;
+                isPaused = true;
+                console.log("stop timer")
+            } else if (isPaused) {
+                console.log("start timer")
+                isPaused = false;
+                countdown = setInterval(startTimer, 1000);
+            }
+        }
     </script>
 </body>
+
 </html>
