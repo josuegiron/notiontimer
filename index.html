@@ -251,12 +251,62 @@
         .audio-player {
             display: none;
         }
+
+        .displaydiv {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            /* z-index: 1; */
+        }
+
+        /* Estilo del botón de pausa que estará oculto por defecto */
+        #pauseButton {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.80);
+            color: white;
+            border: none;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 15px;
+            display: none;
+            transition: opacity 0.2s ease;
+            z-index: 2;
+        }
+
+        /* Mostrar el botón de pausa cuando el mouse esté sobre el cronómetro */
+        .displaydiv:hover #pauseButton {
+            display: block;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .blink {
+            animation: blink 0.5s step-start infinite;
+        }
     </style>
 </head>
 
 <body>
     <div class="timer">
-        <div onclick=togglePause()>
+        <div class="displaydiv">
+            <button id="pauseButton" onclick="togglePause()">Start</button>
             <h1 id="display">00:00</h1>
         </div>
         <div class="bar">
@@ -318,10 +368,11 @@
     <script>
         let countdown, time = 0, totalTime = 0;
         let currentSound = "alarm1";
-        let isPaused = false
+        let isPaused = true;
 
         const alarmButton = document.getElementById("balarm1");
         const startButton = document.getElementById("startButton");
+        const alarm = document.getElementById(currentSound);
 
         alarmButton.classList.add('active');
         startButton.disabled = true;
@@ -378,6 +429,8 @@
                 startButton.disabled = false;
                 totalTime = time;
                 countdown = setInterval(startTimer, 1000);
+                document.getElementById("pauseButton").innerText = "Pause";
+                isPaused = false;
             } else if (startButton.innerText === "Reset") {
                 // Resetear el temporizador
                 clearInterval(countdown);
@@ -387,22 +440,23 @@
                 document.getElementById('progress').style.width = "100%";
                 startButton.innerText = "Start";
                 startButton.disabled = true;
-
-                // Detener el sonido cuando se presiona Reset
                 alarm.pause();
                 alarm.currentTime = 0;
+                display.classList.remove('blink');
+                display.style.color = ''; 
             } else if (startButton.innerText === "Stop") {
-                // Apagar el sonido
                 alarm.pause();
                 alarm.currentTime = 0;
                 startButton.innerText = "Start";
                 startButton.disabled = true;
+                display.classList.remove('blink');
+                display.style.color = ''; 
             }
         }
 
         function changeTime(amount) {
             time = Math.max(0, time + amount * 60);
-            totalTime=time;
+            totalTime = time;
             displayTime(time);
             document.getElementById('progress').style.width = "100%";
             document.getElementById("startButton").disabled = time === 0;
@@ -421,6 +475,15 @@
             const min = Math.floor(seconds / 60);
             const sec = seconds % 60;
             document.getElementById('display').innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+            if (seconds <= 5) {
+                // Parpadeo
+                display.classList.add('blink');
+                display.style.color = 'red'; // Cambiar el color del texto a rojo
+            } else {
+                // Si han pasado más de 5 segundos, aseguramos que no parpadee
+                display.classList.remove('blink');
+                display.style.color = ''; // Restaurar el color original
+            }
         }
 
         function updateProgress(totalTime) {
@@ -465,15 +528,24 @@
         document.getElementById("settingsIcon").onclick = openSettings;
 
         function togglePause() {
-            if (countdown) {
+            const startButton = document.getElementById("startButton")
+            if (!isPaused) {
+                if (!countdown) {
+                    return
+                }
                 clearInterval(countdown);
                 countdown = null;
                 isPaused = true;
-                console.log("stop timer")
+                document.getElementById("pauseButton").innerText = "Start";
+                startButton.innerText = "Start";
             } else if (isPaused) {
-                console.log("start timer")
-                isPaused = false;
+                if (time <= 0) {
+                    return
+                }
                 countdown = setInterval(startTimer, 1000);
+                isPaused = false;
+                startButton.innerText = "Reset";
+                document.getElementById("pauseButton").innerText = "Pause"
             }
         }
     </script>
